@@ -1,0 +1,55 @@
+import requests 
+import json
+
+class User:
+    def __init__(self, id: int, name: str):
+        self.id = id
+        self.name = name
+
+class Channel:
+    def __init__(self, id: int, name: str, member_ids: list[int] | None = None):
+        self.id = id
+        self.name = name
+        self.member_ids = member_ids if member_ids is not None else []
+
+class Message:
+    def __init__(self, id: int, reception_date: str, sender_id: int, channel: int, content: str):
+        self.id = id
+        self.reception_date = reception_date
+        self.sender_id = sender_id
+        self.channel = channel
+        self.content = content
+
+
+class RemoteStorage:
+    def __init__(self):
+        self.base_url = "https://groupe5-python-mines.fr"
+
+    def get_users(self):
+        response = requests.get(f'{self.base_url}/users')
+        donnees = response.json()
+        liste_utilisateurs = []
+        for u in donnees:
+            nouvel_utilisateur = User(u['id'], u['name'])
+            liste_utilisateurs.append(nouvel_utilisateur)
+            
+        return liste_utilisateurs
+
+    def get_channels(self) -> list[Channel]:
+        response = requests.get(f'{self.base_url}/channels')
+        donnees = response.json()
+        liste_channels = []
+        for c in donnees:
+            nouveau_channel = Channel(c['id'], c['name'], c.get('member_ids', []))
+            liste_channels.append(nouveau_channel)
+            
+        return liste_channels
+
+    def create_user(self, username: str):
+        ajout = {"name": username}
+        response = requests.post(f'{self.base_url}/users/create', json=ajout)
+
+
+
+storage = RemoteStorage()
+print(storage.get_channels())
