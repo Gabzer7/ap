@@ -1,24 +1,6 @@
 import requests 
 import json
-
-class User:
-    def __init__(self, id: int, name: str):
-        self.id = id
-        self.name = name
-
-class Channel:
-    def __init__(self, id: int, name: str, member_ids: list[int] | None = None):
-        self.id = id
-        self.name = name
-        self.member_ids = member_ids if member_ids is not None else []
-
-class Message:
-    def __init__(self, id: int, reception_date: str, sender_id: int, channel: int, content: str):
-        self.id = id
-        self.reception_date = reception_date
-        self.sender_id = sender_id
-        self.channel = channel
-        self.content = content
+from model import User,Channel,Message
 
 
 class RemoteStorage:
@@ -27,6 +9,7 @@ class RemoteStorage:
 
     def get_users(self):
         response = requests.get(f'{self.base_url}/users')
+        response.raise_for_status()
         donnees = response.json()
         liste_utilisateurs = []
         for u in donnees:
@@ -37,6 +20,7 @@ class RemoteStorage:
 
     def get_channels(self) -> list[Channel]:
         response = requests.get(f'{self.base_url}/channels')
+        response.raise_for_status()
         donnees = response.json()
         liste_channels = []
         for c in donnees:
@@ -47,9 +31,14 @@ class RemoteStorage:
 
     def create_user(self, username: str):
         ajout = {"name": username}
-        response = requests.post(f'{self.base_url}/users/create', json=ajout)
+        response = requests.post(f'{self.base_url}/users/create', json = ajout)
+        response.raise_for_status()
 
+    def create_channel(self, nom):
+        ajout = {"name" : nom}
+        response = requests.post(f'{self.base_url}/channels/create', json = ajout)
+        response.raise_for_status()
 
 
 storage = RemoteStorage()
-print(storage.get_channels())
+print(storage.create_user('sophie'))

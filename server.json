@@ -11,6 +11,26 @@
         {
             "id": 24,
             "name": "Marc"
+        },
+        {
+            "id": 42,
+            "name": "Gab"
+        },
+        {
+            "id": 43,
+            "name": "Gabzo"
+        },
+        {
+            "id": 44,
+            "name": "Gabzo"
+        },
+        {
+            "id": 45,
+            "name": "Gabzer"
+        },
+        {
+            "id": 46,
+            "name": "Gabzer"
         }
     ],
     "channels": [
@@ -26,6 +46,31 @@
             "id": 13,
             "name": "test",
             "member_ids": []
+        },
+        {
+            "id": 14,
+            "name": "Groupe test",
+            "member_ids": []
+        },
+        {
+            "id": 15,
+            "name": "Groupe tester",
+            "member_ids": []
+        },
+        {
+            "id": 16,
+            "name": "Groupe tester",
+            "member_ids": []
+        },
+        {
+            "id": 17,
+            "name": "Groupe testeur",
+            "member_ids": []
+        },
+        {
+            "id": 18,
+            "name": "Groupe testeur",
+            "member_ids": []
         }
     ],
     "messages": [
@@ -34,7 +79,7 @@
             "reception_date": "2025-12-09 14:00:00",
             "sender_id": 41,
             "channel": 12,
-            "content": "Hi \u00f0\u0178\u2018\u2039"
+            "content": "Hi ðŸ‘‹"
         }
     ]
 }
