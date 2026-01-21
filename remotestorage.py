@@ -38,7 +38,3 @@ class RemoteStorage:
         ajout = {"name" : nom}
         response = requests.post(f'{self.base_url}/channels/create', json = ajout)
         response.raise_for_status()
-
-
-storage = RemoteStorage()
-print(storage.create_user('sophie'))

@@ -1,136 +1,80 @@
-import json
-from model import User,Channel,Message
+import argparse
 
-class Server:
-    def __init__(self, users: list[User], channels: list[Channel], messages: list[Message]):
-        self.users = users
-        self.channels = channels
-        self.messages = messages
-
-    def next_user_id(self):
-        return (max(u.id for u in self.users) + 1) if self.users else 1
-
-    def next_channel_id(self):
-        return (max(c.id for c in self.channels) + 1) if self.channels else 1
+from localstorage import LocalStorage
+from remotestorage import RemoteStorage
 
 
-fichier = open('server.json', 'r')
-server = json.load(fichier)
-users = [User(u["id"], u["name"]) for u in server["users"]]
-channels = [Channel(c["id"], c["name"], c.get("member_ids", [])) for c in server["channels"]]
-messages = [
-    Message(m["id"], m["reception_date"], m["sender_id"], m["channel"], m["content"])
-    for m in server["messages"]
-]
+class UserInterface:
+    def __init__(self, storage):
+        self._storage = storage
 
-server = Server(users, channels, messages)
-fichier.close()
-print("Données chargées !")
+    def run(self):
+        choix = ""
+        while choix != "0":
+            print("\n=== MESSENGER ===")
+            print("1. Afficher les utilisateurs")
+            print("2. Afficher les groupes")
+            print("3. Ajouter un utilisateur")
+            print("4. Ajouter un groupe")
+            print("0. Quitter")
 
-def sauvegarder():
-    server2 = {
-        "users": [{"id": u.id, "name": u.name} for u in server.users],
-        "channels": [{"id": c.id, "name": c.name, "member_ids": c.member_ids} for c in server.channels],
-        "messages": [{
-            "id": m.id,
-            "reception_date": m.reception_date,
-            "sender_id": m.sender_id,
-            "channel": m.channel,
-            "content": m.content
-        } for m in server.messages]
-    }
-    with open("server.json", "w", encoding="utf-8") as fichier:
-        json.dump(server2, fichier, indent=4, ensure_ascii=False)
-    print("Sauvegarde effectuée")
+            choix = input("\nVotre choix : ").strip()
 
+            if choix == "1":
+                self.show_users()
+            elif choix == "2":
+                self.show_channels()
+            elif choix == "3":
+                self.add_user()
+            elif choix == "4":
+                self.add_channel()
+            elif choix == "0":
+                print("Au revoir !")
+            else:
+                print("Choix incorrect.")
 
-def afficher_utilisateurs():
-    print("\nLISTE DES UTILISATEURS")
-    for user in server.users:
-        print(user.id, ":", user.name)
-    input("\nAppuyez sur Entrée pour retourner au menu principal")
+    def show_users(self):
+        print("\nLISTE DES UTILISATEURS")
+        for u in self._storage.get_users():
+            print(u.id, ":", u.name)
+        input("\nEntrée pour revenir...")
 
+    def show_channels(self):
+        print("\nLISTE DES GROUPES")
+        for c in self._storage.get_channels():
+            print("Id:", c.id, "Nom:", c.name)
+        input("\nEntrée pour revenir...")
 
-def afficher_groupes():
-    print("\nLISTE DES GROUPES")
-    for group in server.channels:
-        print("Id:", group.id, "Nom:", group.name)
-    input("\nAppuyez sur Entrée pour retourner au menu principal")
+    def add_user(self):
+        nom = input("Nom du nouvel utilisateur : ").strip()
+        if nom:
+            self._storage.create_user(nom)
+            print("Utilisateur ajouté.")
+        input("Entrée pour revenir...")
 
-
-def ajouter_utilisateur():
-    print("\nAJOUT UTILISATEUR")
-    nom = input("Nom du nouvel utilisateur : ").strip()
-    nouvel_id = server.next_user_id()
-
-    server.users.append(User(nouvel_id, nom))
-    sauvegarder()
-    print(f"Succès : L'utilisateur {nom} a été ajouté.")
-    input("\nAppuyez sur Entrée pour retourner au menu principal")
-
-
-def ajouter_groupe():
-    print("\nAJOUT GROUPE")
-    nom = input("Nom du nouveau groupe : ").strip()
-    nouvel_id = server.next_channel_id()
-
-    server.channels.append(Channel(nouvel_id, nom, []))
-    sauvegarder()
-    print(f"Le groupe {nom} a été créé.")
-    input("\nAppuyez sur Entrée pour retourner au menu principal")
+    def add_channel(self):
+        nom = input("Nom du nouveau groupe : ").strip()
+        if nom:
+            self._storage.create_channel(nom)
+            print("Groupe créé.")
+        input("Entrée pour revenir...")
 
 
-def afficher_messages():
-    print("\nMESSAGES")
-    raw = input("Entrez l'ID du groupe à lire : ").strip()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--storage-file", default="server.json")
+    parser.add_argument("--url", default=None)
+    args = parser.parse_args()
 
-    try:
-        id_groupe = int(raw)
-    except ValueError:
-        print("Erreur : L'ID doit être un nombre.")
-        input("\nAppuyez sur Entrée pour retourner au menu principal...")
-        return
+    if args.url:
+        storage = RemoteStorage() 
+    else:
+        storage = LocalStorage(args.storage_file)
+        storage.load()
 
-    compteur = 0
-    print(f"Messages du groupe {id_groupe} :")
-    for message in server.messages:
-        if message.channel == id_groupe:
-            print(f"[{message.reception_date}] : {message.content}")
-            compteur += 1
-
-    if compteur == 0:
-        print("Aucun message ou groupe vide.")
-
-    input("\nAppuyez sur Entrée pour retourner au menu principal...")
+    ui = UserInterface(storage)
+    ui.run()
 
 
-def menu_principal():
-    choix = ""
-    while choix != "0":
-        print("=== MESSENGER ===")
-        print("1. Afficher les utilisateurs")
-        print("2. Afficher les groupes")
-        print("3. Ajouter un utilisateur")
-        print("4. Ajouter un groupe")
-        print("5. Voir les messages d'un groupe")
-        print("0. Quitter")
-
-        choix = input("\nVotre choix : ").strip()
-
-        if choix == "0":
-            print("Au revoir !")
-        elif choix == "1":
-            afficher_utilisateurs()
-        elif choix == "2":
-            afficher_groupes()
-        elif choix == "3":
-            ajouter_utilisateur()
-        elif choix == "4":
-            ajouter_groupe()
-        elif choix == "5":
-            afficher_messages()
-        else:
-            print("Choix incorrect.")
-            input("Entrée pour réessayer")
-
-menu_principal()
+if __name__ == "__main__":
+    main()

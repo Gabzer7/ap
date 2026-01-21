@@ -67,11 +67,3 @@ class LocalStorage:
         self.save()
         return c
 
-
-
-storage = LocalStorage()
-storage.load()
-storage.create_user("Gabzer")
-storage.create_channel("Groupe testeur")
-print([u.name for u in storage.get_users()])
-print([c.name for c in storage.get_channels()])

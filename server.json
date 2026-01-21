@@ -71,6 +71,11 @@
             "id": 18,
             "name": "Groupe testeur",
             "member_ids": []
+        },
+        {
+            "id": 19,
+            "name": "gp",
+            "member_ids": []
         }
     ],
     "messages": [
