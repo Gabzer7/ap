@@ -12,6 +12,9 @@ class Server:
 
     def next_channel_id(self):
         return (max(c.id for c in self.channels) + 1) if self.channels else 1
+    
+    def next_message_id(self):
+        return (max(m.id for m in self.messages) + 1) if self.messages else 1
 
 
 class LocalStorage:
@@ -66,4 +69,11 @@ class LocalStorage:
         self.server.channels.append(c)
         self.save()
         return c
+    
+    def create_message(self, sender_id: int, channel_id: int, content: str, date: str):
+        new_id = self.server.next_message_id()
+        m = Message(new_id, date, sender_id, channel_id, content)
+        self.server.messages.append(m)
+        self.save()
+        return m
 

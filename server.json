@@ -31,6 +31,10 @@
         {
             "id": 46,
             "name": "Gabzer"
+        },
+        {
+            "id": 47,
+            "name": "p"
         }
     ],
     "channels": [
@@ -76,6 +80,11 @@
             "id": 19,
             "name": "gp",
             "member_ids": []
+        },
+        {
+            "id": 20,
+            "name": "pz",
+            "member_ids": []
         }
     ],
     "messages": [
@@ -85,6 +94,20 @@
             "sender_id": 41,
             "channel": 12,
             "content": "Hi ðŸ‘‹"
+        },
+        {
+            "id": 19,
+            "reception_date": "2026-02-28 23:21:23",
+            "sender_id": 24,
+            "channel": 12,
+            "content": "test en bien"
+        },
+        {
+            "id": 20,
+            "reception_date": "2026-02-28 23:57:56",
+            "sender_id": 25,
+            "channel": 25,
+            "content": "pzk"
         }
     ]
 }
