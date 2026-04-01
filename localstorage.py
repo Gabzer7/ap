@@ -2,18 +2,20 @@ import json
 from model import User,Channel,Message
 
 class Server:
-    def __init__(self, users=None, channels=None, messages=None):
-        self.users = users if users is not None else []
-        self.channels = channels if channels is not None else []
-        self.messages = messages if messages is not None else []
+    # - N'oubliez pas le typage
+    # - Pourquoi utiliser None en valeur par défaut ? Vous pouvez directement mettre une liste vide
+    def __init__(self, users: list[Channel]=[], channels: list[Channel]=[], messages: list[Message]=[]):
+        self.users = users
+        self.channels = channels
+        self.messages = messages
 
-    def next_user_id(self):
+    def next_user_id(self) -> int:
         return (max(u.id for u in self.users) + 1) if self.users else 1
 
-    def next_channel_id(self):
+    def next_channel_id(self) -> int:
         return (max(c.id for c in self.channels) + 1) if self.channels else 1
     
-    def next_message_id(self):
+    def next_message_id(self) -> int:
         return (max(m.id for m in self.messages) + 1) if self.messages else 1
 
 
@@ -21,6 +23,9 @@ class LocalStorage:
 
     def __init__(self, chemin="server.json"):
         self.chemin = chemin
+        # Vous auriez pu stocker les attributs users, channels, et messages
+        # directement dans LocalStorage et vous affranchir
+        # de la définition d'une classe Server
         self.server = Server()  
 
     def load(self):
@@ -47,7 +52,7 @@ class LocalStorage:
         with open(self.chemin, "w") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
-    def get_users(self):
+    def get_users(self) -> list[User]:
         return self.server.users
 
     def get_channels(self):

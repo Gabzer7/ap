@@ -12,6 +12,7 @@ class Channel:
 class Message:
     def __init__(self, id: int, reception_date: str, sender_id: int, channel: int, content: str):
         self.id = id
+        # Le type datetime de la bibliothèque datetime est plus adapté
         self.reception_date = reception_date
         self.sender_id = sender_id
         self.channel = channel

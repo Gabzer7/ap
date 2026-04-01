@@ -6,7 +6,8 @@ from remotestorage import RemoteStorage
 
 
 class UserInterface:
-    def __init__(self, storage):
+    # N'oubliez pas de typer les paramètres de vos fonctions
+    def __init__(self, storage: LocalStorage | RemoteStorage):
         self._storage = storage
 
     def run(self):
@@ -94,6 +95,7 @@ class UserInterface:
 
         content = input("Votre message : ").strip()
         if content:
+            # La génération de la date est plutôt du ressort du storage.
             date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self._storage.create_message(sender_id, channel_id, content, date_str)
             print("Message publié !")
@@ -108,6 +110,7 @@ def main():
     args = parser.parse_args()
 
     if args.url:
+        # Vous devriez passer l'argument args.url à RemoteStorage
         storage = RemoteStorage() 
     else:
         storage = LocalStorage(args.storage_file)

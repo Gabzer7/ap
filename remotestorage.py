@@ -7,7 +7,7 @@ class RemoteStorage:
     def __init__(self):
         self.base_url = "https://groupe5-python-mines.fr"
 
-    def get_users(self):
+    def get_users(self) -> list[User]:
         response = requests.get(f'{self.base_url}/users')
         response.raise_for_status()
         donnees = response.json()
@@ -58,6 +58,7 @@ class RemoteStorage:
         response = requests.post(f'{self.base_url}/channels/create', json = ajout)
         response.raise_for_status()
 
+    # Le paramètre date n'est pas utilisé dans cette fonction
     def create_message(self, sender_id: int, channel_id: int, content: str, date: str):
             ajout = {
                 "sender_id": sender_id,
